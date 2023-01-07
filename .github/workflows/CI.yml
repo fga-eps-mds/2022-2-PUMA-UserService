@@ -10,47 +10,72 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./
-    services:
-      dbtest:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: pumaadmin
-          POSTGRES_USER: pumaadmin
-          POSTGRES_DB: puma
-        ports:
-            - "5432:5432"
-    env:
-      DB_URL: "postgres://pumaadmin:pumaadmin@localhost:5432/puma"
-
+    env: 
+      - DB_URL_TEST: postgres://pumaadmin:pumaadmin@dbtest:5432/puma
+      - DB_USER: pumaadmin
+      - DB_PASS: pumaadmin
+      - DB: puma
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      
+      - name: Build Containers
+        run: docker-compose -f test.docker-compose.yaml up -d
+      
+      - name: Create Database
+        run: | 
+          sudo docker cp ./tests/utils/db_create.sql dbtest:/db_create.sql 
+          sudo docker exec dbtest psql -U pumaadmin -d puma -f /db_create.sql
+      
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-    - name: Use Node.js 14.x
-      uses: actions/setup-node@v3
-      with:
-        node-version: 14.x
-
-    - name: Run npm install
-      run: npm install
-
-    - name: Create Database
-      run: | 
-        sudo docker cp ./tests/utils/db_create.sql dbtest:/db_create.sql 
-        sudo docker exec dbtest psql -U pumaadmin -d puma -f /db_create.sql
-    
-    - name: Test and Coverage
-      run: npm run test-coverage
-
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-    #- name: Coveralls
-    #  uses: coverallsapp/github-action@master
-    #  with:
-    #    github-token: ${{ secrets.REPO_TOKEN }}
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        working-directory: ./
+#    services:
+#      dbtest:
+#        image: postgres
+#        env:
+#          POSTGRES_PASSWORD: pumaadmin
+#          POSTGRES_USER: pumaadmin
+#          POSTGRES_DB: puma
+#        ports:
+#            - "5432:5432"
+#    env:
+#      DB_URL: "postgres://pumaadmin:pumaadmin@localhost:5432/puma"
+#
+#    steps:
+#    - uses: actions/checkout@v3
+#
+#    - name: Use Node.js 14.x
+#      uses: actions/setup-node@v3
+#      with:
+#        node-version: 14.x
+#
+#    - name: Run npm install
+#      run: npm install
+#
+#    - name: Create Database
+#      run: | 
+#        sudo docker cp ./tests/utils/db_create.sql dbtest:/db_create.sql 
+#        sudo docker exec dbtest psql -U pumaadmin -d puma -f /db_create.sql
+#    
+#    - name: Test and Coverage
+#      run: npm run test-coverage
+#
+#    - name: SonarCloud Scan
+#      uses: sonarsource/sonarcloud-github-action@master
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+#        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#
+#    #- name: Coveralls
+#    #  uses: coverallsapp/github-action@master
+#    #  with:
+#    #    github-token: ${{ secrets.REPO_TOKEN }}
