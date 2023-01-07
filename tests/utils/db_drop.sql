@@ -20,7 +20,7 @@ DROP TABLE IF EXISTS COMMON_USER CASCADE;
 DROP TABLE IF EXISTS POST CASCADE;
 DROP TABLE IF EXISTS FILE CASCADE;
 
-DROP TYPE stats_post;
-DROP TYPE stats_project;
-DROP TYPE stats_semester;
-DROP TYPE stats_semester_status;
+DROP TYPE IF EXISTS stats_post;
+DROP TYPE IF EXISTS stats_project;
+DROP TYPE IF EXISTS stats_semester;
+DROP TYPE IF EXISTS stats_semester_status;
