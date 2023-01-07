@@ -29,9 +29,7 @@ jobs:
           POSTGRES_USER: pumaadmin
           POSTGRES_DB: puma
     env:
-      POSTGRES_PASSWORD: pumaadmin
-      POSTGRES_USER: pumaadmin
-      POSTGRES_DB: puma
+      DB_HOST: localhost
       DB_URL_TEST: postgres://pumaadmin:pumaadmin@dbtest:5432/puma
       ENVIRONMENT: test
 
