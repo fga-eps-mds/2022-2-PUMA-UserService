@@ -15,6 +15,7 @@ jobs:
       DB_USER: pumaadmin
       DB_PASS: pumaadmin
       DB: puma
+      ENVIRONMENT: test
     steps:
       - uses: actions/checkout@v3
       
