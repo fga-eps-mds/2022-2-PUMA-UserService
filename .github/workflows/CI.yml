@@ -32,7 +32,7 @@ jobs:
       POSTGRES_PASSWORD: pumaadmin
       POSTGRES_USER: pumaadmin
       POSTGRES_DB: puma
-      DB_URL_TEST: postgres://pumaadmin:pumaadmin@db-user-test:5432/puma
+      DB_URL_TEST: postgres://pumaadmin:pumaadmin@dbtest:5432/puma
       ENVIRONMENT: test
 
     steps:
