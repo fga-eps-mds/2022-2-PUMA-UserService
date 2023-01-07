@@ -14,19 +14,16 @@ jobs:
       run:
         working-directory: ./
     services:
-      dbtest:
+      postgres:
         image: postgres
         env:
-            POSTGRES_PASSWORD: pumaadmin
-            POSTGRES_USER: pumaadmin
-            POSTGRES_DB: puma
-            DATABASE_URL: "postgres://pumaadmin:pumaadmin@dbtest:5432/puma"
+          POSTGRES_PASSWORD: pumaadmin
+          POSTGRES_USER: pumaadmin
+          POSTGRES_DB: puma
         ports:
             - "5432:5432"
     env:
-      ENVIRONMENT: test
-      DB_URL: "postgres://pumaadmin:pumaadmin@dbtest:5432/puma"
-      DB_URL_TEST: "postgres://pumaadmin:pumaadmin@dbtest:5432/puma"
+      DB_URL: "postgres://pumaadmin:pumaadmin@localhost:5432/puma"
 
     steps:
     - uses: actions/checkout@v3
@@ -38,6 +35,9 @@ jobs:
 
     - name: Run npm install
       run: npm install
+
+    - name: Run scripts
+      run: ./tests/utils/db_script_test.sh drop && ./tests/utils/db_script_test.sh create && ./tests/utils/db_script_test.sh populate
     
     - name: Test and Coverage
       run: npm run test-coverage
