@@ -36,8 +36,10 @@ jobs:
     - name: Run npm install
       run: npm install
 
-    - name: Run scripts
-      run: ./tests/utils/db_script_test.sh drop && ./tests/utils/db_script_test.sh create && ./tests/utils/db_script_test.sh populate
+    - name: Create Database
+      run: | 
+        sudo docker cp ./tests/utils/db_create.sql dbtest:/db_create.sql 
+        sudo docker exec dbtest psql -U pumaadmin -d puma -f /db_create.sql
     
     - name: Test and Coverage
       run: npm run test-coverage
