@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: Build Containers
-        run: docker-compose -f test.docker-compose.yaml up -d
+        run: docker-compose -f test.docker-compose.yaml up -d --build
       
       - name: Create and Populate Database
         run: | 
