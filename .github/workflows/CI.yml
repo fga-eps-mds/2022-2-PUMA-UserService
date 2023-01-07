@@ -5,7 +5,7 @@ on:
     branches: 
       - dev
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, edited]
 
 jobs:
   build:
@@ -21,11 +21,16 @@ jobs:
       - name: Build Containers
         run: docker-compose -f test.docker-compose.yaml up -d
       
-      - name: Create Database
+      - name: Create and Populate Database
         run: | 
           sudo docker cp ./tests/utils/db_create.sql dbtest:/db_create.sql 
           sudo docker exec dbtest psql -U pumaadmin -d puma -f /db_create.sql
+          sudo docker cp ./tests/utils/db_populate.sql dbtest:/db_populate.sql
+          sudo docker exec dbtest psql -U pumaadmin -d puma -f /db_populate.sql
       
+      - name: Run Tests
+        run: npm run test-coverage
+
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
