@@ -7,20 +7,34 @@ on:
   pull_request:
     types: [opened, reopened, edited]
 
+env:
+  POSTGRES_PASSWORD: pumaadmin
+  POSTGRES_USER: pumaadmin
+  POSTGRES_DB: puma
+  DATABASE_URL: "postgres://pumaadmin:pumaadmin@dbtest:5432/puma"
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env: 
-      DB_URL_TEST: "postgres://pumaadmin:pumaadmin@dbtest:5432/puma"
-      DB_USER: pumaadmin
-      DB_PASS: pumaadmin
-      DB: puma
-      ENVIRONMENT: test
+    defaults:
+      run:
+        working-directory: ./
+    services:
+      dbtest:
+        image: postgres            
+        ports:
+          - "5432:5432"
+
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Build Containers
-        run: docker-compose -f test.docker-compose.yaml up -d --build
+
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+  
+      - name: Run npm install
+        run: npm install
       
       - name: Create and Populate Database
         run: | 
