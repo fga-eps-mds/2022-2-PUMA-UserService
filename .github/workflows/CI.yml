@@ -24,7 +24,9 @@ jobs:
         ports:
             - "5432:5432"
     env:
+      ENVIRONMENT: test
       DB_URL: "postgres://pumaadmin:pumaadmin@dbtest:5432/puma"
+      DB_URL_TEST: "postgres://pumaadmin:pumaadmin@dbtest:5432/puma"
 
     steps:
     - uses: actions/checkout@v3
